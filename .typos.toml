@@ -1,0 +1,16 @@
+[files]
+
+ignore-hidden = true
+ignore-files = true
+ignore-dot = true
+ignore-vcs = true
+ignore-global = true
+ignore-parent = true
+extend-exclude = ["*.world", "*.dcf","*.info","*.ui","*.urdf","*.world","*.xacro", "*.stp", "*.EDS", "*.mdef"]
+
+[default]
+
+binary = false
+check-filename = true
+check-file = true
+unicode = true
