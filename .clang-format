@@ -1,0 +1,55 @@
+---
+# See all possible options and defaults with:
+# clang-format --style=llvm --dump-config
+BasedOnStyle: LLVM
+AccessModifierOffset: -4
+AllowShortLambdasOnASingleLine: true
+AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeBinaryOperators: All
+BreakConstructorInitializers: BeforeColon
+ColumnLimit: 99
+CommentPragmas: 'NOLINT:.*|^ IWYU pragma:'
+IncludeBlocks: Regroup
+IndentCaseLabels: true
+IndentPPDirectives: AfterHash
+IndentWidth: 4
+Language: Cpp
+SpaceAfterCStyleCast: true
+Standard: Cpp11
+StatementMacros: ['PyObject_HEAD']
+TabWidth: 4
+IncludeCategories:
+  # C standard headers
+  # yamllint disable-line
+  - Regex: <(assert|complex|ctype|errno|fenv|float|inttypes|iso646|limits|locale|math|setjmp|signal|stdalign|stdarg|stdatomic|stdbit|stdbool|stdckdint|stddef|stdint|stdio|stdlib|stdnoreturn|string|tgmath|threads|time|uchar|wchar|wctype)\.h>
+    Priority: 10
+
+  # C++ standard headers (taken from cppreference up to C++23)
+  # yamllint disable-line
+  - Regex: <(algorithm|any|array|atomic|barrier|bitset|bit|cassert|cctype|cerrno|cfenv|cfloat|charconv|chrono|cinttypes|climits|clocale|cmath|codecvt|compare|complex|concepts|condition_variable|coroutine|csetjmp|csignal|cstdarg|cstddef|cstdint|cstdio|cstdlib|cstring|ctime|cuchar|cwchar|cwctype|deque|exception|execution|expected|filesystem|flat_map|flat_set|format|forward_list|fstream|functional|future|generator|hazard_pointer|initializer_list|iomanip|iosfwd|iostream|ios|istream|iterator|latch|limits|list|locale|map|mdspan|memory_resource|memory|mutex|new|numbers|numeric|optional|ostream|print|queue|random|ranges|ratio|rcu|regex|scoped_allocator|semaphore|set|shared_mutex|source_location|spanstream|span|sstream|stacktrace|stack|stdexcept|stdfloat|stop_token|streambuf|string_view|string|strstream|syncstream|system_error|text_encoding|thread|tuple|type_traits|typeindex|typeinfo|unordered_map|unordered_set|utility|valarray|variant|vector|version)>
+    Priority: 20
+
+  - Regex: (<|")pinocchio\/fwd.hpp(>|")
+    Priority: 25  # NB: Needs to be above OCS2 any headers
+
+  # Other libraries
+  - Regex: (<|")boost\/
+    Priority: 100
+  - Regex: (<|")(Eigen|Unsupported/Eigen)\/
+    Priority: 100
+  - Regex: ("<)fmt\/
+    Priority: 100
+  - Regex: ("<)[[:alnum:]_\.]+.h>
+    Priority: 110
+  - Regex: ("<)[[:alnum:]_\.]+>
+    Priority: 110
+  - Regex: ("<)[[:alnum:]_\.]+
+    Priority: 110
+  - Regex: '.*'
+    Priority: 200
+...
+# Local Variables:
+# mode: yaml
+# End:
