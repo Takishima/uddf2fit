@@ -1,6 +1,12 @@
 ---
 
-exclude: ^src/garmin.*$
+exclude: |
+    (?x)^(
+       src/garmin.*/.*|
+       src/uddf_parser.*/.*|
+       .*\.xsd|
+       data/.*
+    )$
 
 repos:
   - repo: meta

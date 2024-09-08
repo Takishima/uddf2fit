@@ -39,6 +39,8 @@ Changelog = 'https://github.com/Takishima/uddf2fit/blob/main/CHANGELOG.md'
 
 [project.optional-dependencies]
 test = ['pytest', 'pytest-cov', 'pytest-mock', 'mock']
+xsdata = ['xsdata[cli,lxml,soap]']
+
 
 [project.scripts]
 # uddf2fit = 'uddf2fit.main:main'
