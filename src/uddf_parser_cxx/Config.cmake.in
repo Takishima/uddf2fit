@@ -1,0 +1,6 @@
+@PACKAGE_INIT@
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(xerces-c REQUIRED IMPORTED_TARGET xerces-c)
+
+include("${CMAKE_CURRENT_LIST_DIR}/uddf_parser_cxx.cmake")
