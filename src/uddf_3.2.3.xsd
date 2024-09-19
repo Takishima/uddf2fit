@@ -56,8 +56,14 @@
 	<!--
 		*** global types
 	-->
+        <xs:simpleType name="ID" id="ID">
+          <xs:restriction base="xs:token"/>
+        </xs:simpleType>
+        <xs:simpleType name="IDREF" id="IDREF">
+          <xs:restriction base="xs:token"/>
+        </xs:simpleType>
 	<xs:complexType name="ID_TYPE">
-		<xs:attribute name="id" type="xs:ID" use="required"/>
+		<xs:attribute name="id" type="ID" use="required"/>
 	</xs:complexType>
 	<xs:simpleType name="markerType">
 		<xs:restriction base="xs:string">
@@ -111,7 +117,7 @@
 		</xs:choice>
 	</xs:complexType>
 	<xs:complexType name="linkType">
-		<xs:attribute name="ref" type="xs:IDREF" use="required"/>
+		<xs:attribute name="ref" type="IDREF" use="required"/>
 	</xs:complexType>
 	<xs:complexType name="priceType">
 		<xs:simpleContent>
@@ -141,7 +147,7 @@
 	</xs:complexType>
 	<xs:simpleType name="ratingvalueType">
 		<xs:restriction base="xs:short">
-			<xs:minInclusive value="1"/>
+			<xs:minInclusive value="0"/>
 			<xs:maxInclusive value="10"/>
 		</xs:restriction>
 	</xs:simpleType>
@@ -391,8 +397,8 @@ end of old version -->
 		</xs:complexContent>
 	</xs:complexType>
 	<xs:complexType name="examinationType">
-		<xs:complexContent>
-			<xs:extension base="ID_TYPE">
+		<!-- <xs:complexContent> -->
+			<!-- <xs:extension base="ID_TYPE"> -->
 				<xs:sequence>
 					<xs:element name="datetime" type="xs:dateTime" minOccurs="0"/>
 					<xs:choice minOccurs="0">
@@ -411,8 +417,8 @@ end of old version -->
 					<xs:element name="vitalcapacity" type="xs:float" minOccurs="0"/>
 					<xs:element name="notes" type="notesType" minOccurs="0"/>
 				</xs:sequence>
-			</xs:extension>
-		</xs:complexContent>
+			<!-- </xs:extension> -->
+		<!-- </xs:complexContent> -->
 	</xs:complexType>
 	<xs:complexType name="certificationType">
 		<xs:sequence>
@@ -506,7 +512,7 @@ Ende auskommentiert von Kai -->
 <!-- Ende Ergänzung von Kai -->
 	<xs:complexType name="manufacturerType">
 		<xs:complexContent>
-			<xs:extension base="namedType">
+			<xs:extension base="simpleNamedType">
 				<xs:sequence>
 					<xs:element name="address" type="addressType" minOccurs="0"/>
 					<xs:element name="contact" type="contactType" minOccurs="0"/>
@@ -684,7 +690,7 @@ Ende auskommentiert von Kai -->
 	</xs:complexType>
 	<xs:complexType name="geographyType">
 		<xs:all>
-			<xs:element name="location" type="xs:string"/>
+			<xs:element name="location" type="xs:string" minOccurs="0"/>
 			<xs:element name="address" type="addressType" minOccurs="0"/>
 			<xs:element name="latitude" type="xs:float" minOccurs="0"/>
 			<xs:element name="longitude" type="xs:float" minOccurs="0"/>
@@ -1281,8 +1287,8 @@ Ende auskommentiert von Kai -->
 				<xs:complexType>
 					<xs:simpleContent>
 						<xs:extension base="xs:float">
-							<xs:attribute name="deviceref" type="xs:IDREF" use="required"/>
-							<xs:attribute name="tankref" type="xs:IDREF"/>
+							<xs:attribute name="deviceref" type="IDREF" use="required"/>
+							<xs:attribute name="tankref" type="IDREF"/>
 						</xs:extension>
 					</xs:simpleContent>
 				</xs:complexType>
@@ -1334,7 +1340,7 @@ Ende auskommentiert von Kai -->
 				<xs:complexType>
 					<xs:simpleContent>
 						<xs:extension base="xs:float">
-							<xs:attribute name="ref" type="xs:IDREF"/>
+							<xs:attribute name="ref" type="IDREF"/>
 						</xs:extension>
 					</xs:simpleContent>
 				</xs:complexType>
@@ -1358,7 +1364,7 @@ Ende auskommentiert von Kai -->
 				<xs:complexType>
 					<xs:simpleContent>
 						<xs:extension base="xs:float">
-							<xs:attribute name="ref" type="xs:IDREF"/>
+							<xs:attribute name="ref" type="IDREF"/>
 						</xs:extension>
 					</xs:simpleContent>
 				</xs:complexType>
@@ -1714,7 +1720,7 @@ Ende auskommentiert von Kai -->
 	<xs:complexType name="dcgasdefinitionsdataType">
 		<xs:sequence>
 			<xs:element name="setdcallgasdefinitions" type="markerType" minOccurs="0" maxOccurs="1"/>
-			<xs:element name="setdcgasdata" type="xs:IDREF" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="setdcgasdata" type="IDREF" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="dcendndtalarmType">
@@ -1729,10 +1735,10 @@ Ende auskommentiert von Kai -->
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="dcdivesitedataType">
-		<xs:attribute name="divesite" type="xs:IDREF" use="required"/>
+		<xs:attribute name="divesite" type="IDREF" use="required"/>
 	</xs:complexType>
 	<xs:complexType name="dcbuddydataType">
-		<xs:attribute name="buddy" type="xs:IDREF" use="required"/>
+		<xs:attribute name="buddy" type="IDREF" use="required"/>
 	</xs:complexType>
 	<xs:complexType name="dcdivedepthalarmType">
 		<xs:all>
