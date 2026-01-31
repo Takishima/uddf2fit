@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <string>
 
-#include <garmin_fit_sdk/fit.hpp>
+#include <fit_profile.hpp>
 
 namespace uddf2fit {
 

@@ -30,7 +30,9 @@ add_library(garmin::fit_sdk ALIAS garmin_fit_sdk)
 target_include_directories(
   garmin_fit_sdk
   PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
-         $<INSTALL_INTERFACE:include>)
+         $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include/garmin_fit_sdk>
+         $<INSTALL_INTERFACE:include>
+         $<INSTALL_INTERFACE:include/garmin_fit_sdk>)
 
 set_target_properties(garmin_fit_sdk PROPERTIES
   POSITION_INDEPENDENT_CODE ON)

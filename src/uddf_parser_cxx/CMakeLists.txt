@@ -200,7 +200,10 @@ target_include_directories(
          $<INSTALL_INTERFACE:include>
          $<INSTALL_INTERFACE:include/uddf2fit>)
 
-target_link_libraries(uddf_parser_cxx PUBLIC PkgConfig::xerces-c)
+target_link_libraries(uddf_parser_cxx
+  PUBLIC
+    XercesC::XercesC
+    libxsd_headers)
 
 set_target_properties(uddf_parser_cxx PROPERTIES
   POSITION_INDEPENDENT_CODE ON)
