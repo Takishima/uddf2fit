@@ -67,19 +67,23 @@ void DiveFitWriter::write_sport() {
     encoder_.Write(msg);
 }
 
-void DiveFitWriter::write_dive_settings() {
+void DiveFitWriter::write_dive_settings(const DiveSettingsData& settings) {
     fit::DiveSettingsMesg msg;
     msg.SetMessageIndex(0);
     msg.SetModel(FIT_TISSUE_MODEL_TYPE_ZHL_16C);
-    msg.SetGfLow(40);
-    msg.SetGfHigh(85);
-    msg.SetWaterType(FIT_WATER_TYPE_SALT);
-    msg.SetWaterDensity(1025.0f);
+    msg.SetGfLow(settings.gf_low);
+    msg.SetGfHigh(settings.gf_high);
+    msg.SetWaterType(settings.is_salt_water ? FIT_WATER_TYPE_SALT : FIT_WATER_TYPE_FRESH);
+    msg.SetWaterDensity(settings.water_density);
     msg.SetPo2Warn(1.4f);
     msg.SetPo2Critical(1.6f);
     msg.SetSafetyStopEnabled(FIT_TRUE);
     msg.SetSafetyStopTime(180);
     encoder_.Write(msg);
+}
+
+void DiveFitWriter::write_dive_settings() {
+    write_dive_settings(DiveSettingsData{});
 }
 
 void DiveFitWriter::write_dive_gas(const std::vector<GasMix>& gases) {
@@ -129,23 +133,63 @@ void DiveFitWriter::write_event_timer_stop(FIT_DATE_TIME timestamp) {
     encoder_.Write(msg);
 }
 
+void DiveFitWriter::write_record(FIT_DATE_TIME timestamp, const RecordData& data) {
+    fit::RecordMesg msg;
+    msg.SetTimestamp(timestamp);
+    msg.SetDepth(static_cast<FIT_FLOAT32>(data.depth));
+
+    if (data.temperature) {
+        msg.SetTemperature(*data.temperature);
+    }
+
+    if (data.ascent_rate) {
+        msg.SetAscentRate(static_cast<FIT_FLOAT32>(*data.ascent_rate));
+    }
+
+    if (data.heart_rate) {
+        msg.SetHeartRate(*data.heart_rate);
+    }
+
+    if (data.cns_load) {
+        msg.SetCnsLoad(*data.cns_load);
+    }
+
+    if (data.n2_load) {
+        msg.SetN2Load(*data.n2_load);
+    }
+
+    if (data.po2) {
+        msg.SetPo2(static_cast<FIT_FLOAT32>(*data.po2));
+    }
+
+    if (data.ndl_time) {
+        msg.SetNdlTime(*data.ndl_time);
+    }
+
+    if (data.next_stop_depth) {
+        msg.SetNextStopDepth(static_cast<FIT_FLOAT32>(*data.next_stop_depth));
+    }
+
+    if (data.next_stop_time) {
+        msg.SetNextStopTime(*data.next_stop_time);
+    }
+
+    if (data.absolute_pressure) {
+        msg.SetAbsolutePressure(*data.absolute_pressure);
+    }
+
+    encoder_.Write(msg);
+}
+
 void DiveFitWriter::write_record(FIT_DATE_TIME timestamp,
                                   double depth,
                                   std::optional<int8_t> temperature,
                                   std::optional<double> ascent_rate) {
-    fit::RecordMesg msg;
-    msg.SetTimestamp(timestamp);
-    msg.SetDepth(static_cast<FIT_FLOAT32>(depth));
-
-    if (temperature) {
-        msg.SetTemperature(*temperature);
-    }
-
-    if (ascent_rate) {
-        msg.SetAscentRate(static_cast<FIT_FLOAT32>(*ascent_rate));
-    }
-
-    encoder_.Write(msg);
+    RecordData data;
+    data.depth = depth;
+    data.temperature = temperature;
+    data.ascent_rate = ascent_rate;
+    write_record(timestamp, data);
 }
 
 void DiveFitWriter::write_lap(FIT_DATE_TIME start_time,
@@ -219,8 +263,7 @@ void DiveFitWriter::write_session(FIT_DATE_TIME start_time,
 
 void DiveFitWriter::write_dive_summary(FIT_DATE_TIME timestamp,
                                         const DiveStatistics& stats,
-                                        uint32_t dive_number,
-                                        uint32_t surface_interval,
+                                        const DiveSummaryData& summary_data,
                                         FIT_MESG_NUM reference_mesg,
                                         uint16_t reference_index) {
     fit::DiveSummaryMesg msg;
@@ -230,8 +273,8 @@ void DiveFitWriter::write_dive_summary(FIT_DATE_TIME timestamp,
     msg.SetAvgDepth(static_cast<FIT_FLOAT32>(stats.avg_depth));
     msg.SetMaxDepth(static_cast<FIT_FLOAT32>(stats.max_depth));
     msg.SetBottomTime(static_cast<FIT_FLOAT32>(stats.bottom_time));
-    msg.SetDiveNumber(dive_number);
-    msg.SetSurfaceInterval(surface_interval);
+    msg.SetDiveNumber(summary_data.dive_number);
+    msg.SetSurfaceInterval(summary_data.surface_interval);
     msg.SetDescentTime(static_cast<FIT_FLOAT32>(stats.descent_time));
     msg.SetAscentTime(static_cast<FIT_FLOAT32>(stats.ascent_time));
     msg.SetAvgAscentRate(static_cast<FIT_FLOAT32>(stats.avg_ascent_rate));
@@ -239,13 +282,26 @@ void DiveFitWriter::write_dive_summary(FIT_DATE_TIME timestamp,
     msg.SetMaxAscentRate(static_cast<FIT_FLOAT32>(stats.max_ascent_rate));
     msg.SetMaxDescentRate(static_cast<FIT_FLOAT32>(stats.max_descent_rate));
 
-    // Default CNS/N2 values (not available in basic UDDF)
-    msg.SetStartCns(0);
-    msg.SetEndCns(0);
-    msg.SetStartN2(0);
-    msg.SetEndN2(0);
+    // CNS/N2/OTU values
+    msg.SetStartCns(summary_data.start_cns);
+    msg.SetEndCns(summary_data.end_cns);
+    msg.SetStartN2(summary_data.start_n2);
+    msg.SetEndN2(summary_data.end_n2);
+    msg.SetO2Toxicity(summary_data.o2_toxicity);
 
     encoder_.Write(msg);
+}
+
+void DiveFitWriter::write_dive_summary(FIT_DATE_TIME timestamp,
+                                        const DiveStatistics& stats,
+                                        uint32_t dive_number,
+                                        uint32_t surface_interval,
+                                        FIT_MESG_NUM reference_mesg,
+                                        uint16_t reference_index) {
+    DiveSummaryData summary_data;
+    summary_data.dive_number = dive_number;
+    summary_data.surface_interval = surface_interval;
+    write_dive_summary(timestamp, stats, summary_data, reference_mesg, reference_index);
 }
 
 void DiveFitWriter::write_activity(FIT_DATE_TIME timestamp, uint32_t total_elapsed_time) {

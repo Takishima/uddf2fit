@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <optional>
 #include <string>
 #include <vector>
@@ -29,6 +30,13 @@ struct DiveSite {
     Location location;
 };
 
+// Decompression stop information
+struct DecoStop {
+    std::string kind;      // "safety" or "mandatory"
+    double depth{0.0};     // Deco stop depth in meters
+    double duration{0.0};  // Deco stop duration in seconds
+};
+
 // Single waypoint in a dive profile
 struct Waypoint {
     double divetime{0.0};                      // Time since dive start (seconds)
@@ -37,6 +45,16 @@ struct Waypoint {
     std::optional<double> tank_pressure;       // Tank pressure in Pascal
     std::optional<std::string> alarm;          // Alarm type if any
     std::optional<std::string> gas_switch_ref; // Gas switch reference
+
+    // Additional fields supported by FIT
+    std::optional<double> heartrate;           // Heart rate in bpm
+    std::optional<double> cns;                 // CNS oxygen toxicity (0-1 fraction)
+    std::optional<double> otu;                 // Oxygen Toxicity Units
+    std::optional<double> calculated_po2;     // Calculated pO2 in bar
+    std::optional<double> measured_po2;       // Measured pO2 in bar
+    std::optional<double> ndl_time;           // No-decompression limit (seconds)
+    std::optional<double> setpo2;             // Rebreather setpoint pO2
+    std::optional<DecoStop> deco_stop;        // Current deco stop info
 };
 
 // Information collected before the dive
@@ -45,6 +63,9 @@ struct InformationBeforeDive {
     std::optional<std::string> divesite_ref;   // Reference to dive site
     std::optional<double> surface_interval;    // Surface interval in seconds
     std::optional<double> air_temperature;     // Air temperature in Kelvin
+    std::optional<uint32_t> dive_number;       // Sequential dive number
+    std::optional<double> altitude;            // Altitude in meters
+    std::optional<double> surface_pressure;    // Surface pressure in Pascal
 };
 
 // Information collected after the dive
@@ -54,6 +75,10 @@ struct InformationAfterDive {
     std::optional<double> dive_duration;       // Total dive time in seconds
     std::optional<double> lowest_temperature;  // Min water temp in Kelvin
     std::optional<std::string> notes;          // Dive notes
+
+    // Decompression/physiology data
+    std::optional<double> end_cns;             // End CNS % (0-100)
+    std::optional<double> end_otu;             // End OTU (Oxygen Toxicity Units)
 };
 
 // Equipment configuration for a dive

@@ -149,38 +149,99 @@ void convert_dive(const uddf2fit::Dive& dive,
 
     writer.write_event_timer_start(start_time);
 
-    // Write all record messages
+    // Track CNS/N2 for summary
+    uint8_t start_cns = 0;
+    uint8_t end_cns = 0;
+    uint16_t start_n2 = 0;
+    uint16_t end_n2 = 0;
+    uint16_t end_otu = 0;
+    bool first_waypoint = true;
+
+    // Write all record messages with extended data
     std::optional<double> prev_depth;
     std::optional<double> prev_time;
-    for (const auto& wp : waypoints) {
-        auto timestamp = start_time + static_cast<uint32_t>(wp.divetime);
+    for (size_t i = 0; i < dive.waypoints.size(); ++i) {
+        const auto& uddf_wp = dive.waypoints[i];
+        auto timestamp = start_time + static_cast<uint32_t>(uddf_wp.divetime);
 
-        std::optional<int8_t> temp;
-        if (wp.temperature) {
-            temp = uddf2fit::kelvin_to_celsius(*wp.temperature);
+        uddf2fit::DiveFitWriter::RecordData record;
+        record.depth = uddf_wp.depth;
+
+        // Temperature (convert from Kelvin to Celsius)
+        if (uddf_wp.temperature) {
+            record.temperature = uddf2fit::kelvin_to_celsius(*uddf_wp.temperature);
         }
 
-        std::optional<double> ascent_rate;
-        if (prev_depth && prev_time && wp.divetime > *prev_time) {
-            double dt = wp.divetime - *prev_time;
-            ascent_rate = (*prev_depth - wp.depth) / dt;  // Positive = ascending
+        // Ascent rate
+        if (prev_depth && prev_time && uddf_wp.divetime > *prev_time) {
+            double dt = uddf_wp.divetime - *prev_time;
+            record.ascent_rate = (*prev_depth - uddf_wp.depth) / dt;  // Positive = ascending
         }
 
-        writer.write_record(timestamp, wp.depth, temp, ascent_rate);
+        // Heart rate
+        if (uddf_wp.heartrate) {
+            record.heart_rate = static_cast<uint8_t>(*uddf_wp.heartrate);
+        }
 
-        prev_depth = wp.depth;
-        prev_time = wp.divetime;
+        // CNS load (UDDF uses 0-1 fraction, FIT uses 0-100%)
+        if (uddf_wp.cns) {
+            uint8_t cns_percent = static_cast<uint8_t>(*uddf_wp.cns * 100.0);
+            record.cns_load = cns_percent;
+            if (first_waypoint) {
+                start_cns = cns_percent;
+            }
+            end_cns = cns_percent;
+        }
+
+        // pO2 (prefer measured over calculated for rebreathers)
+        if (uddf_wp.measured_po2) {
+            record.po2 = *uddf_wp.measured_po2;
+        } else if (uddf_wp.calculated_po2) {
+            record.po2 = *uddf_wp.calculated_po2;
+        }
+
+        // NDL time (no-decompression limit)
+        if (uddf_wp.ndl_time) {
+            record.ndl_time = static_cast<uint32_t>(*uddf_wp.ndl_time);
+        }
+
+        // Deco stop info
+        if (uddf_wp.deco_stop) {
+            record.next_stop_depth = uddf_wp.deco_stop->depth;
+            record.next_stop_time = static_cast<uint32_t>(uddf_wp.deco_stop->duration);
+        }
+
+        // OTU tracking (cumulative)
+        if (uddf_wp.otu) {
+            end_otu = static_cast<uint16_t>(*uddf_wp.otu);
+        }
+
+        writer.write_record(timestamp, record);
+
+        prev_depth = uddf_wp.depth;
+        prev_time = uddf_wp.divetime;
+        first_waypoint = false;
     }
 
     writer.write_event_timer_stop(end_time);
     writer.write_lap(start_time, end_time, stats, is_multi_gas);
     writer.write_session(start_time, end_time, stats, location, is_multi_gas);
 
+    // Build dive summary data
+    uddf2fit::DiveFitWriter::DiveSummaryData summary_data;
+    summary_data.dive_number = dive.info_before.dive_number.value_or(dive_number);
+    summary_data.surface_interval = dive.info_before.surface_interval
+        ? static_cast<uint32_t>(*dive.info_before.surface_interval)
+        : surface_interval;
+    summary_data.start_cns = start_cns;
+    summary_data.end_cns = end_cns;
+    summary_data.start_n2 = start_n2;
+    summary_data.end_n2 = end_n2;
+    summary_data.o2_toxicity = end_otu;
+
     // Write two dive summaries: one for session, one for lap
-    writer.write_dive_summary(end_time, stats, dive_number, surface_interval,
-                              FIT_MESG_NUM_SESSION, 0);
-    writer.write_dive_summary(end_time, stats, dive_number, surface_interval,
-                              FIT_MESG_NUM_LAP, 0);
+    writer.write_dive_summary(end_time, stats, summary_data, FIT_MESG_NUM_SESSION, 0);
+    writer.write_dive_summary(end_time, stats, summary_data, FIT_MESG_NUM_LAP, 0);
 
     writer.write_activity(end_time, static_cast<uint32_t>(stats.bottom_time));
 

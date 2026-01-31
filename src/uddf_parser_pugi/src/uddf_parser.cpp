@@ -130,6 +130,56 @@ auto parse_waypoint(pugi::xml_node wp) -> Waypoint {
         waypoint.gas_switch_ref = switch_node.attribute("ref").as_string();
     }
 
+    // Heart rate (UDDF uses heartrate or pulserate)
+    if (auto hr_node = wp.child("heartrate")) {
+        waypoint.heartrate = parse_double(hr_node.text().as_string());
+    } else if (auto pr_node = wp.child("pulserate")) {
+        waypoint.heartrate = parse_double(pr_node.text().as_string());
+    }
+
+    // CNS oxygen toxicity (UDDF uses 0-1 fraction)
+    if (auto cns_node = wp.child("cns")) {
+        waypoint.cns = parse_double(cns_node.text().as_string());
+    }
+
+    // OTU (Oxygen Toxicity Units)
+    if (auto otu_node = wp.child("otu")) {
+        waypoint.otu = parse_double(otu_node.text().as_string());
+    }
+
+    // Calculated pO2
+    if (auto po2_node = wp.child("calculatedpo2")) {
+        waypoint.calculated_po2 = parse_double(po2_node.text().as_string());
+    }
+
+    // Measured pO2 (from rebreather sensors)
+    if (auto mpo2_node = wp.child("measuredpo2")) {
+        waypoint.measured_po2 = parse_double(mpo2_node.text().as_string());
+    }
+
+    // No-decompression limit time
+    if (auto ndl_node = wp.child("nodecotime")) {
+        waypoint.ndl_time = parse_double(ndl_node.text().as_string());
+    }
+
+    // Rebreather setpoint
+    if (auto setpo2_node = wp.child("setpo2")) {
+        waypoint.setpo2 = parse_double(setpo2_node.text().as_string());
+    }
+
+    // Deco stop information
+    if (auto deco_node = wp.child("decostop")) {
+        DecoStop deco;
+        deco.kind = deco_node.attribute("kind").as_string();
+        if (auto depth_attr = deco_node.attribute("decodepth")) {
+            deco.depth = depth_attr.as_double();
+        }
+        if (auto dur_attr = deco_node.attribute("duration")) {
+            deco.duration = dur_attr.as_double();
+        }
+        waypoint.deco_stop = deco;
+    }
+
     return waypoint;
 }
 
@@ -153,6 +203,23 @@ auto parse_info_before(pugi::xml_node info) -> InformationBeforeDive {
 
     if (auto air_temp = info.child("airtemperature")) {
         result.air_temperature = parse_double(air_temp.text().as_string());
+    }
+
+    // Dive number
+    if (auto num_node = info.child("divenumber")) {
+        if (auto val = parse_double(num_node.text().as_string())) {
+            result.dive_number = static_cast<uint32_t>(*val);
+        }
+    }
+
+    // Altitude
+    if (auto alt_node = info.child("altitude")) {
+        result.altitude = parse_double(alt_node.text().as_string());
+    }
+
+    // Surface pressure
+    if (auto sp_node = info.child("surfacepressure")) {
+        result.surface_pressure = parse_double(sp_node.text().as_string());
     }
 
     return result;
