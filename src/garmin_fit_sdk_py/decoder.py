@@ -57,6 +57,7 @@ class Decoder:
         self._expand_sub_fields = True
         self._expand_components = True
         self._merge_heart_rates = True
+        self._include_unknown_data = True
 
     def is_fit(self):
         """Returns whether the file is a valid fit file."""
@@ -116,6 +117,7 @@ class Decoder:
         expand_components=True,
         merge_heart_rates=True,
         mesg_listener=None,
+        include_unknown_data=True,
     ):
         """Reads the entire contents of the fit file and returns the decoded messages"""
         self._apply_scale_and_offset = apply_scale_and_offset
@@ -126,6 +128,7 @@ class Decoder:
         self._expand_components = expand_components
         self._merge_heart_rates = merge_heart_rates
         self._mesg_listener = mesg_listener
+        self._include_unknown_data = include_unknown_data
 
         self._local_mesg_defs = {}
         self._developer_data_defs = {}
@@ -252,6 +255,7 @@ class Decoder:
 
         if mesg_def['global_mesg_num'] in Profile['messages']:
             message_profile = Profile['messages'][mesg_def['global_mesg_num']]
+            is_unknown = False
         else:
             message_profile = {
                 'name': str(mesg_def['global_mesg_num']),
@@ -259,11 +263,14 @@ class Decoder:
                 'num': mesg_def['global_mesg_num'],
                 'fields': {},
             }
-
-        # TODO add option for unknown data
+            is_unknown = True
 
         # Add the profile to the local message definition
-        self._local_mesg_defs[mesg_def['local_mesg_num']] = {**mesg_def, **message_profile}
+        self._local_mesg_defs[mesg_def['local_mesg_num']] = {**mesg_def, **message_profile, 'is_unknown': is_unknown}
+
+        # Skip initializing messages storage for unknown message types if include_unknown_data is False
+        if is_unknown and not self._include_unknown_data:
+            return
 
         messages_key = message_profile['messages_key'] if 'messages_key' in message_profile else None
         if message_profile is not None and messages_key not in self._messages:
@@ -322,6 +329,10 @@ class Decoder:
 
         if len(developer_fields) != 0:
             message['developer_fields'] = developer_fields
+
+        # Skip unknown messages if include_unknown_data is False
+        if mesg_def.get('is_unknown', False) and not self._include_unknown_data:
+            return
 
         # Append decoded message
         self._messages[messages_key].append(message)
