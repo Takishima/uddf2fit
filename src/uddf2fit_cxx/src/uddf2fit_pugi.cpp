@@ -126,11 +126,21 @@ auto extract_dive_settings(const uddf2fit::Dive& dive, const uddf2fit::UddfDocum
 
     // Get gradient factors from decomodel if available
     if (doc.deco_model) {
-        if (doc.deco_model->gf_low) {
-            settings.gf_low = *doc.deco_model->gf_low;
-        }
-        if (doc.deco_model->gf_high) {
-            settings.gf_high = *doc.deco_model->gf_high;
+        // Warn if using a non-Bühlmann model (FIT only supports ZHL-16C)
+        if (doc.deco_model->model_type == uddf2fit::TissueModelType::RGBM) {
+            std::cerr << "Warning: UDDF uses RGBM decompression model, but FIT only supports ZHL-16C. "
+                      << "Gradient factors will not be applied.\n";
+        } else if (doc.deco_model->model_type == uddf2fit::TissueModelType::VPM) {
+            std::cerr << "Warning: UDDF uses VPM decompression model, but FIT only supports ZHL-16C. "
+                      << "Gradient factors will not be applied.\n";
+        } else if (doc.deco_model->model_type == uddf2fit::TissueModelType::Buehlmann) {
+            // Bühlmann model - apply gradient factors
+            if (doc.deco_model->gf_low) {
+                settings.gf_low = *doc.deco_model->gf_low;
+            }
+            if (doc.deco_model->gf_high) {
+                settings.gf_high = *doc.deco_model->gf_high;
+            }
         }
     }
 
