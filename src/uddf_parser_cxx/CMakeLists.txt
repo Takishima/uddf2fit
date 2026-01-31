@@ -1,24 +1,25 @@
+# UDDF Parser C++ Library
+# Generated from UDDF 3.2.3 XSD using xsdcxx
+# Can be built standalone or as part of the uddf2fit project
+
 cmake_minimum_required(VERSION 3.27)
 
-# C++ files generated with:
+if(NOT PROJECT_NAME)
+  project(
+    uddf_parser_cxx
+    LANGUAGES CXX
+    VERSION 1.0.0)
+  set(UDDF_PARSER_STANDALONE TRUE)
 
-# xsdcxx cxx-tree --namespace-map http://www.streit.cc/uddf/3.2/=streit \
-# --output-dir xsd_parser  --root-element uddf --generate-ostream \
-# --generate-forward --file-per-type uddf_3.2.3.xsd
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(xerces-c REQUIRED IMPORTED_TARGET xerces-c)
+endif()
 
-project(
-  uddf_parser_cxx
-  LANGUAGES CXX
-  VERSION 1.0.0)
+# ==============================================================================
+# Source files (generated from XSD)
+# ==============================================================================
 
-find_package(PkgConfig REQUIRED)
-
-pkg_check_modules(xerces-c REQUIRED IMPORTED_TARGET xerces-c)
-
-# ==================================================================================================
-
-add_library(
-  uddf_parser_cxx
+set(UDDF_PARSER_SOURCES
   ${CMAKE_CURRENT_LIST_DIR}/src/load.cpp
   ${CMAKE_CURRENT_LIST_DIR}/src/abundance.cxx
   ${CMAKE_CURRENT_LIST_DIR}/src/accommodationType.cxx
@@ -125,7 +126,6 @@ add_library(
   ${CMAKE_CURRENT_LIST_DIR}/src/lifestage.cxx
   ${CMAKE_CURRENT_LIST_DIR}/src/lightintensityType.cxx
   ${CMAKE_CURRENT_LIST_DIR}/src/linkType.cxx
-  ${CMAKE_CURRENT_LIST_DIR}/src/load.cpp
   ${CMAKE_CURRENT_LIST_DIR}/src/maker.cxx
   ${CMAKE_CURRENT_LIST_DIR}/src/manufacturerType.cxx
   ${CMAKE_CURRENT_LIST_DIR}/src/markerType.cxx
@@ -208,430 +208,50 @@ add_library(
   ${CMAKE_CURRENT_LIST_DIR}/src/workload.cxx
   ${CMAKE_CURRENT_LIST_DIR}/src/wreckType.cxx)
 
-target_sources(
-  uddf_parser_cxx
-  PUBLIC
-    FILE_SET
-    HEADERS
-    BASE_DIRS
-    ${CMAKE_CURRENT_LIST_DIR}/include
-    FILES
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/load.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/abundance-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/abundance.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/accommodationType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/accommodationType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/acknowledge-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/acknowledge.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/addressType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/addressType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/alarm-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/alarm.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/alarmType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/alarmType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/alcoholbeforedive-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/alcoholbeforedive.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/anysymptoms-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/anysymptoms.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/apparatus-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/apparatus.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/applicationdataType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/applicationdataType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/ascent-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/ascent.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/baseCalculationType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/baseCalculationType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/batterychargecondition-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/batterychargecondition.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/bottomtimetablescopeType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/bottomtimetablescopeType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/bottomtimetableType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/bottomtimetableType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/buddy-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/buddy.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/buehlmannType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/buehlmannType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/builtType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/builtType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/business-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/business.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/calculatebottomtimetable-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/calculatebottomtimetable.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/calculateprofile-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/calculateprofile.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/calculatetable-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/calculatetable.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/cameraType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/cameraType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/caveType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/caveType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/certificationType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/certificationType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/contactType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/contactType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/currency-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/currency.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/current-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/current.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dateoftrip-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dateoftrip.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcalarmtimeType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcalarmtimeType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcalarmType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcalarmType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcalarmWithDepthType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcalarmWithDepthType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcalarmWithTimeType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcalarmWithTimeType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcbuddydataType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcbuddydataType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcdecomodelType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcdecomodelType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcdivedepthalarmType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcdivedepthalarmType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcdivepo2alarmType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcdivepo2alarmType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcdivesitedataType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcdivesitedataType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcdivetimealarmType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcdivetimealarmType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcendndtalarmType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcendndtalarmType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcgasdefinitionsdataType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dcgasdefinitionsdataType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/decomodel-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/decomodel.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/decostop-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/decostop.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/decotrainer-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/decotrainer.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/descent-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/descent.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dimensionType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dimensionType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/divebaseType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/divebaseType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/divecomputercontrol-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/divecomputercontrol.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/divecomputerdumpType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/divecomputerdumpType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/diveinsurances-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/diveinsurances.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/divemode-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/divemode.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/divemodeType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/divemodeType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/divepermissions-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/divepermissions.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/diveplan-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/diveplan.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/diver-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/diver.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/divesite-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/divesite.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/divetable-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/divetable.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/divetrip-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/divetrip.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/diveType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/diveType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dominance-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/dominance.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/drugType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/drugType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/ecologyType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/ecologyType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/education-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/education.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/encapsulatedDateTimeType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/encapsulatedDateTimeType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/environment-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/environment.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/equipmentconfigurationType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/equipmentconfigurationType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/equipmentmalfunction-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/equipmentmalfunction.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/equipmentPieceType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/equipmentPieceType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/equipmentType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/equipmentType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/equipmentused-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/equipmentused.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/examinationresult-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/examinationresult.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/examinationType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/examinationType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/exposuretoaltitudeType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/exposuretoaltitudeType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/faunaType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/faunaType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/floraType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/floraType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/gasdefinitions-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/gasdefinitions.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/gas-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/gas.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/generator-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/generator.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/geographyType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/geographyType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/getdcdataType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/getdcdataType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/globalalarm-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/globalalarm.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/globalalarmsgiven-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/globalalarmsgiven.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/globallightintensityType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/globallightintensityType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/gradientfactor-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/gradientfactor.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/guideType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/guideType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/hargikas-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/hargikas.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/heinrichsweikamp-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/heinrichsweikamp.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/ID-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/ID.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/IDREF-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/IDREF.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/ID_TYPE-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/ID_TYPE.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/imagedata-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/imagedata.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/imageType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/imageType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/individualType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/individualType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/indoorType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/indoorType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/infinity-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/infinity.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/informationafterdiveType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/informationafterdiveType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/informationbeforediveType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/informationbeforediveType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/inputprofileType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/inputprofileType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/instructorType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/instructorType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/insuranceType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/insuranceType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/invertebrataType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/invertebrataType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/kind-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/kind.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/lifestage-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/lifestage.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/lightintensityType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/lightintensityType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/linkType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/linkType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/load.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/maker-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/maker.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/manufacturerType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/manufacturerType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/markerType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/markerType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/measuredpo2-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/measuredpo2.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/mediadata-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/mediadata.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/mediaType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/mediaType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/medicalbeforedive-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/medicalbeforedive.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/medical-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/medical.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/membership-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/membership.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/meteringmethod-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/meteringmethod.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/mixchangeType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/mixchangeType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/mixType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/mixType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/namedType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/namedType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/nosuit-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/nosuit.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/notesType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/notesType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/numberofdives-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/numberofdives.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/observationsType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/observationsType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/occurence-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/occurence.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/operatorType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/operatorType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/outputType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/outputType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/periodicallytaken-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/periodicallytaken.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/permitType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/permitType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/personalType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/personalType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/personType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/personType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/placeType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/placeType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/platform-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/platform.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/priceperdivepackageType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/priceperdivepackageType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/priceType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/priceType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/problems-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/problems.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/profiledata-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/profiledata.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/program-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/program.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/purchaseType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/purchaseType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/purpose-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/purpose.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/quality-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/quality.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/ratingType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/ratingType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/ratingvalueType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/ratingvalueType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/rebreatherType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/rebreatherType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/relateddives-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/relateddives.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/repetitiongroupType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/repetitiongroupType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/rgbmType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/rgbmType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/samplesType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/samplesType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/setby-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/setby.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/setdcdataType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/setdcdataType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/setpo2-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/setpo2.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/sexType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/sexType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/shopType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/shopType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/simpleNamedType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/simpleNamedType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/singleLifeFormType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/singleLifeFormType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/sitedataType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/sitedataType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/siteType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/siteType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/smoking-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/smoking.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/speciesType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/speciesType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/stateofrestbeforedive-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/stateofrestbeforedive.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/suittype1-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/suittype1.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/suitType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/suitType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/surfaceintervalType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/surfaceintervalType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tablegeneration-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tablegeneration.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tablescopeType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tablescopeType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tableType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tableType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tankdataType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tankdataType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tankmaterialType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tankmaterialType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tankpressure-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tankpressure.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tankType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tankType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tausim-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tausim.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tautabu-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tautabu.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/thermalcomfort-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/thermalcomfort.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tissueType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tissueType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/transportation-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/transportation.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/trippartType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/trippartType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tripType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/tripType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/type-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/type.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/uddf_3.2.3-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/uddf_3.2.3.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/uddf-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/uddf.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/vertebrataType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/vertebrataType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/vesselType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/vesselType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/videocameraType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/videocameraType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/vpmType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/vpmType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/wayaltitudeType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/wayaltitudeType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/waypointType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/waypointType.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/workload-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/workload.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/wreckType-fwd.hxx
-    ${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit/wreckType.hxx)
+# ==============================================================================
+# Library
+# ==============================================================================
+
+add_library(uddf_parser_cxx ${UDDF_PARSER_SOURCES})
+add_library(uddf2fit::uddf_parser ALIAS uddf_parser_cxx)
 
 target_include_directories(
   uddf_parser_cxx
   PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
          $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include/uddf2fit>
-         $<INSTALL_INTERFACE:include> $<INSTALL_INTERFACE:include/uddf2fit>)
+         $<INSTALL_INTERFACE:include>
+         $<INSTALL_INTERFACE:include/uddf2fit>)
+
 target_link_libraries(uddf_parser_cxx PUBLIC PkgConfig::xerces-c)
 
-add_executable(test ${CMAKE_CURRENT_LIST_DIR}/main.cpp)
-target_link_libraries(test PRIVATE uddf_parser_cxx)
+set_target_properties(uddf_parser_cxx PROPERTIES
+  CXX_STANDARD 20
+  CXX_STANDARD_REQUIRED ON
+  POSITION_INDEPENDENT_CODE ON)
 
-# ==================================================================================================
+# ==============================================================================
+# Test executable (only in standalone mode)
+# ==============================================================================
 
-if(NOT TARGET uddf2fit::uddf_parser_cxx)
-  add_library(uddf2fit::uddf_parser_cxx ALIAS uddf_parser_cxx)
+if(UDDF_PARSER_STANDALONE)
+  add_executable(uddf_parser_test ${CMAKE_CURRENT_LIST_DIR}/main.cpp)
+  target_link_libraries(uddf_parser_test PRIVATE uddf_parser_cxx)
 endif()
 
-# ==================================================================================================
+# ==============================================================================
+# Installation
+# ==============================================================================
+
+include(GNUInstallDirs)
 
 install(
   TARGETS uddf_parser_cxx
-  EXPORT uddf_parser_cxx
-  LIBRARY COMPONENT Runtime NAMELINK_COMPONENT Development
-  RUNTIME COMPONENT Runtime
-  ARCHIVE COMPONENT Development
-          FILE_SET HEADERS
-          COMPONENT Development)
+  EXPORT uddf2fitTargets
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
 install(
-  EXPORT uddf_parser_cxx
-  NAMESPACE uddf2fit::
-  DESTINATION lib/cmake/uddf_parser_cxx)
-
-include(CMakePackageConfigHelpers)
-configure_package_config_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
-  "${CMAKE_CURRENT_BINARY_DIR}/uddf_parser_cxxConfig.cmake"
-  INSTALL_DESTINATION "lib/cmake/uddf_parser_cxx"
-  NO_SET_AND_CHECK_MACRO NO_CHECK_REQUIRED_COMPONENTS_MACRO)
-write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/uddf_parser_cxxConfigVersion.cmake"
-  COMPATIBILITY AnyNewerVersion)
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/uddf_parser_cxxConfig.cmake
-              ${CMAKE_CURRENT_BINARY_DIR}/uddf_parser_cxxConfigVersion.cmake
-        DESTINATION lib/cmake/uddf_parser_cxx)
+  DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
