@@ -109,6 +109,24 @@ auto extract_location(const uddf2fit::Dive& dive, const uddf2fit::UddfDocument& 
     };
 }
 
+auto extract_dive_settings(const uddf2fit::Dive& dive, const uddf2fit::UddfDocument& doc)
+    -> uddf2fit::DiveFitWriter::DiveSettingsData {
+    uddf2fit::DiveFitWriter::DiveSettingsData settings;
+
+    // Try to get water density from dive site
+    if (dive.info_before.divesite_ref) {
+        if (const auto* site = doc.find_site(*dive.info_before.divesite_ref)) {
+            if (site->density) {
+                settings.water_density = static_cast<float>(*site->density);
+                // Determine water type based on density (threshold at 1012.5 kg/m³)
+                settings.is_salt_water = (*site->density > 1012.5);
+            }
+        }
+    }
+
+    return settings;
+}
+
 void convert_dive(const uddf2fit::Dive& dive,
                   const uddf2fit::UddfDocument& doc,
                   uint32_t dive_number,
@@ -124,6 +142,7 @@ void convert_dive(const uddf2fit::Dive& dive,
 
     auto gases = extract_gases(dive, doc);
     auto location = extract_location(dive, doc);
+    auto dive_settings = extract_dive_settings(dive, doc);
     auto stats = uddf2fit::calculate_dive_stats(waypoints);
 
     // Parse datetime
@@ -144,7 +163,7 @@ void convert_dive(const uddf2fit::Dive& dive,
     writer.write_file_id(start_time);
     writer.write_device_info(start_time);
     writer.write_sport();
-    writer.write_dive_settings();
+    writer.write_dive_settings(dive_settings);
     writer.write_dive_gas(gases);
 
     writer.write_event_timer_start(start_time);

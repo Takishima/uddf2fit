@@ -94,6 +94,13 @@ void parse_dive_sites(pugi::xml_node divesite, UddfDocument& doc) {
             ds.location = parse_location(geo);
         }
 
+        // Parse sitedata for water density
+        if (auto sitedata = site.child("sitedata")) {
+            if (auto density_node = sitedata.child("density")) {
+                ds.density = parse_double(density_node.text().as_string());
+            }
+        }
+
         doc.dive_sites.push_back(std::move(ds));
     }
 }

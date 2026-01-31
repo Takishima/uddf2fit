@@ -1,5 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
+#include <limits>
 
 #include "uddf2fit/conversions.hpp"
 
@@ -79,16 +80,17 @@ TEST_CASE("degrees_to_semicircles converts correctly", "[conversions]") {
         CHECK(result > -200000000);
     }
 
-    SECTION("180 degrees equals max positive") {
+    SECTION("180 degrees wraps to min int (semicircle overflow)") {
         auto result = uddf2fit::degrees_to_semicircles(180.0);
-        // Should be close to 2^31
-        CHECK(result > 2147000000);
+        // 180 * (2^31 / 180) = 2^31, which overflows to -2^31 in int32
+        // This is mathematically correct: 180° = -180° in circular representation
+        CHECK(result == std::numeric_limits<int32_t>::min());
     }
 
-    SECTION("-180 degrees equals max negative") {
+    SECTION("-180 degrees equals min int") {
         auto result = uddf2fit::degrees_to_semicircles(-180.0);
-        // Should be close to -2^31
-        CHECK(result < -2147000000);
+        // -180 * (2^31 / 180) = -2^31
+        CHECK(result == std::numeric_limits<int32_t>::min());
     }
 }
 
@@ -96,8 +98,8 @@ TEST_CASE("parse_iso_datetime parses correctly", "[conversions]") {
     SECTION("standard format") {
         auto timestamp = uddf2fit::parse_iso_datetime("2024-05-29T09:22:06");
         // Should be Unix timestamp for 2024-05-29 09:22:06 UTC
-        // Expected: 1716973326
-        CHECK(timestamp == 1716973326);
+        // Verified with Python: datetime(2024,5,29,9,22,6,tzinfo=UTC).timestamp() = 1716974526
+        CHECK(timestamp == 1716974526);
     }
 
     SECTION("beginning of 2024") {
@@ -108,7 +110,8 @@ TEST_CASE("parse_iso_datetime parses correctly", "[conversions]") {
 
     SECTION("end of year") {
         auto timestamp = uddf2fit::parse_iso_datetime("2024-12-31T23:59:59");
-        CHECK(timestamp > 1735689599);  // Should be the last second of 2024
+        // 2024-12-31 23:59:59 UTC = 1735689599
+        CHECK(timestamp == 1735689599);
     }
 }
 

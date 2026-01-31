@@ -28,6 +28,7 @@ struct DiveSite {
     std::string id;
     std::string name;
     Location location;
+    std::optional<double> density;  // Water density in kg/m³ (fresh ~1000, salt ~1025)
 };
 
 // Decompression stop information
