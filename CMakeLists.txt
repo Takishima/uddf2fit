@@ -50,8 +50,24 @@ add_subdirectory(src/uddf2fit_cxx)
 # ==============================================================================
 
 if(UDDF2FIT_BUILD_TESTS)
+  include(FetchContent)
+  FetchContent_Declare(
+    Catch2
+    GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+    GIT_TAG v3.5.2
+    FIND_PACKAGE_ARGS
+  )
+  FetchContent_MakeAvailable(Catch2)
+
+  # Add Catch2 CMake module path (for catch_discover_tests)
+  if(catch2_SOURCE_DIR)
+    list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
+  endif()
+
   enable_testing()
-  # add_subdirectory(tests)  # TODO: Add when tests are implemented
+  include(CTest)
+  include(Catch)
+  add_subdirectory(tests)
 endif()
 
 # ==============================================================================
