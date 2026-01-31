@@ -1,6 +1,10 @@
 # UDDF to FIT Converter
 
-add_executable(uddf2fit ${CMAKE_CURRENT_LIST_DIR}/src/uddf2fit.cpp)
+add_executable(uddf2fit
+  ${CMAKE_CURRENT_LIST_DIR}/src/uddf2fit.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/src/conversions.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/src/dive_stats.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/src/fit_writer.cpp)
 
 target_include_directories(
   uddf2fit
