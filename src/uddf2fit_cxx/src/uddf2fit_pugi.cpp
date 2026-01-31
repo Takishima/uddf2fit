@@ -124,6 +124,16 @@ auto extract_dive_settings(const uddf2fit::Dive& dive, const uddf2fit::UddfDocum
         }
     }
 
+    // Get gradient factors from decomodel if available
+    if (doc.deco_model) {
+        if (doc.deco_model->gf_low) {
+            settings.gf_low = *doc.deco_model->gf_low;
+        }
+        if (doc.deco_model->gf_high) {
+            settings.gf_high = *doc.deco_model->gf_high;
+        }
+    }
+
     return settings;
 }
 

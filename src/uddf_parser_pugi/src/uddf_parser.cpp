@@ -343,6 +343,50 @@ void parse_profile_data(pugi::xml_node profile, UddfDocument& doc) {
     }
 }
 
+// Parse decompression model settings
+void parse_decomodel(pugi::xml_node decomodel_node, UddfDocument& doc) {
+    DecoModel model;
+
+    // Check for Bühlmann model with gradient factors
+    if (auto buehlmann = decomodel_node.child("buehlmann")) {
+        model.model_type = TissueModelType::Buehlmann;
+
+        if (auto gf_low_node = buehlmann.child("gradientfactorlow")) {
+            if (auto val = parse_double(gf_low_node.text().as_string())) {
+                // UDDF stores as fraction (0-1), convert to percent
+                if (*val <= 1.0) {
+                    model.gf_low = static_cast<uint8_t>(*val * 100.0);
+                } else {
+                    model.gf_low = static_cast<uint8_t>(*val);
+                }
+            }
+        }
+
+        if (auto gf_high_node = buehlmann.child("gradientfactorhigh")) {
+            if (auto val = parse_double(gf_high_node.text().as_string())) {
+                // UDDF stores as fraction (0-1), convert to percent
+                if (*val <= 1.0) {
+                    model.gf_high = static_cast<uint8_t>(*val * 100.0);
+                } else {
+                    model.gf_high = static_cast<uint8_t>(*val);
+                }
+            }
+        }
+
+        doc.deco_model = model;
+    }
+    // Check for RGBM model
+    else if (decomodel_node.child("rgbm")) {
+        model.model_type = TissueModelType::RGBM;
+        doc.deco_model = model;
+    }
+    // Check for VPM model
+    else if (decomodel_node.child("vpm")) {
+        model.model_type = TissueModelType::VPM;
+        doc.deco_model = model;
+    }
+}
+
 } // namespace
 
 auto UddfParser::parse(const std::filesystem::path& filename)
@@ -390,6 +434,11 @@ auto UddfParser::parse(const std::filesystem::path& filename)
         parse_dive_sites(divesite, doc);
     }
 
+    // Parse decompression model settings
+    if (auto decomodel = uddf.child("decomodel")) {
+        parse_decomodel(decomodel, doc);
+    }
+
     // Parse profile data (contains the actual dives)
     if (auto profile = uddf.child("profiledata")) {
         parse_profile_data(profile, doc);
@@ -435,6 +484,10 @@ auto UddfParser::parse_string(const std::string& content)
 
     if (auto divesite = uddf.child("divesite")) {
         parse_dive_sites(divesite, doc);
+    }
+
+    if (auto decomodel = uddf.child("decomodel")) {
+        parse_decomodel(decomodel, doc);
     }
 
     if (auto profile = uddf.child("profiledata")) {

@@ -38,6 +38,20 @@ struct DecoStop {
     double duration{0.0};  // Deco stop duration in seconds
 };
 
+// Decompression model settings
+enum class TissueModelType {
+    Unknown,
+    Buehlmann,  // ZHL-16 variants
+    RGBM,
+    VPM
+};
+
+struct DecoModel {
+    TissueModelType model_type{TissueModelType::Unknown};
+    std::optional<uint8_t> gf_low;   // Gradient factor low (0-100%)
+    std::optional<uint8_t> gf_high;  // Gradient factor high (0-100%)
+};
+
 // Single waypoint in a dive profile
 struct Waypoint {
     double divetime{0.0};                      // Time since dive start (seconds)
@@ -111,6 +125,7 @@ struct UddfDocument {
     std::vector<UddfGasMix> gases;
     std::vector<DiveSite> dive_sites;
     std::vector<RepetitionGroup> repetition_groups;
+    std::optional<DecoModel> deco_model;  // Global decompression model settings
 
     // Convenience method to get all dives flattened
     [[nodiscard]] auto all_dives() const -> std::vector<const Dive*> {
