@@ -1,23 +1,5 @@
 # UDDF Parser C++ Library
 # Generated from UDDF 3.2.3 XSD using xsdcxx
-# Can be built standalone or as part of the uddf2fit project
-
-cmake_minimum_required(VERSION 3.27)
-
-if(NOT PROJECT_NAME)
-  project(
-    uddf_parser_cxx
-    LANGUAGES CXX
-    VERSION 1.0.0)
-  set(UDDF_PARSER_STANDALONE TRUE)
-
-  find_package(PkgConfig REQUIRED)
-  pkg_check_modules(xerces-c REQUIRED IMPORTED_TARGET xerces-c)
-endif()
-
-# ==============================================================================
-# Source files (generated from XSD)
-# ==============================================================================
 
 set(UDDF_PARSER_SOURCES
   ${CMAKE_CURRENT_LIST_DIR}/src/load.cpp
@@ -208,10 +190,6 @@ set(UDDF_PARSER_SOURCES
   ${CMAKE_CURRENT_LIST_DIR}/src/workload.cxx
   ${CMAKE_CURRENT_LIST_DIR}/src/wreckType.cxx)
 
-# ==============================================================================
-# Library
-# ==============================================================================
-
 add_library(uddf_parser_cxx ${UDDF_PARSER_SOURCES})
 add_library(uddf2fit::uddf_parser ALIAS uddf_parser_cxx)
 
@@ -225,25 +203,9 @@ target_include_directories(
 target_link_libraries(uddf_parser_cxx PUBLIC PkgConfig::xerces-c)
 
 set_target_properties(uddf_parser_cxx PROPERTIES
-  CXX_STANDARD 20
-  CXX_STANDARD_REQUIRED ON
   POSITION_INDEPENDENT_CODE ON)
 
-# ==============================================================================
-# Test executable (only in standalone mode)
-# ==============================================================================
-
-if(UDDF_PARSER_STANDALONE)
-  add_executable(uddf_parser_test ${CMAKE_CURRENT_LIST_DIR}/main.cpp)
-  target_link_libraries(uddf_parser_test PRIVATE uddf_parser_cxx)
-endif()
-
-# ==============================================================================
 # Installation
-# ==============================================================================
-
-include(GNUInstallDirs)
-
 install(
   TARGETS uddf_parser_cxx
   EXPORT uddf2fitTargets

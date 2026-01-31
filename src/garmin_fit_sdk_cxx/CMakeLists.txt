@@ -1,19 +1,4 @@
 # Garmin FIT SDK C++ Library
-# Can be built standalone or as part of the uddf2fit project
-
-cmake_minimum_required(VERSION 3.27)
-
-if(NOT PROJECT_NAME)
-  project(
-    garmin_fit_sdk
-    LANGUAGES CXX
-    VERSION 1.0.0)
-  set(GARMIN_FIT_SDK_STANDALONE TRUE)
-endif()
-
-# ==============================================================================
-# Library
-# ==============================================================================
 
 add_library(
   garmin_fit_sdk
@@ -48,15 +33,10 @@ target_include_directories(
          $<INSTALL_INTERFACE:include>)
 
 set_target_properties(garmin_fit_sdk PROPERTIES
-  CXX_STANDARD 20
-  CXX_STANDARD_REQUIRED ON
   POSITION_INDEPENDENT_CODE ON)
 
-# ==============================================================================
-# Example executables (only in standalone mode or when examples enabled)
-# ==============================================================================
-
-if(GARMIN_FIT_SDK_STANDALONE OR UDDF2FIT_BUILD_EXAMPLES)
+# Example executables
+if(UDDF2FIT_BUILD_EXAMPLES)
   add_executable(fit_decode_example ${CMAKE_CURRENT_LIST_DIR}/src/decode.cpp)
   target_link_libraries(fit_decode_example PRIVATE garmin_fit_sdk)
 
@@ -64,12 +44,7 @@ if(GARMIN_FIT_SDK_STANDALONE OR UDDF2FIT_BUILD_EXAMPLES)
   target_link_libraries(fit_encode_example PRIVATE garmin_fit_sdk)
 endif()
 
-# ==============================================================================
 # Installation
-# ==============================================================================
-
-include(GNUInstallDirs)
-
 install(
   TARGETS garmin_fit_sdk
   EXPORT uddf2fitTargets
