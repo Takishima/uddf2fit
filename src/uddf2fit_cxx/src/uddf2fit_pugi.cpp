@@ -267,8 +267,9 @@ void convert_dive(const uddf2fit::Dive& dive,
     writer.write_session(start_time, end_time, stats, location, is_multi_gas);
 
     // Build dive summary data
+    // Use the passed dive_number (from CLI --start-number or default)
     uddf2fit::DiveFitWriter::DiveSummaryData summary_data;
-    summary_data.dive_number = dive.info_before.dive_number.value_or(dive_number);
+    summary_data.dive_number = dive_number;
     summary_data.surface_interval = dive.info_before.surface_interval
         ? static_cast<uint32_t>(*dive.info_before.surface_interval)
         : surface_interval;
@@ -293,18 +294,72 @@ void convert_dive(const uddf2fit::Dive& dive,
 
 } // namespace
 
+void print_usage() {
+    std::cerr << "Usage: uddf2fit <uddf_file> <output_dir> [options]\n"
+              << "\n"
+              << "Options:\n"
+              << "  -n, --start-number N   Start dive numbering at N (default: 1)\n"
+              << "  -h, --help             Show this help message\n";
+}
+
 auto main(int argc, char* argv[]) -> int {
     if (argc < 2) {
-        std::cerr << "Usage: uddf2fit <uddf_file> <output_dir>\n";
-        return 1;
-    }
-    if (argc < 3) {
-        std::cerr << "Missing argument: output_dir\n";
+        print_usage();
         return 1;
     }
 
-    std::filesystem::path uddf_file{argv[1]};
-    std::filesystem::path output_dir{argv[2]};
+    // Parse arguments
+    std::filesystem::path uddf_file;
+    std::filesystem::path output_dir;
+    uint32_t start_dive_number = 1;
+
+    int positional_count = 0;
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+
+        if (arg == "-h" || arg == "--help") {
+            print_usage();
+            return 0;
+        } else if (arg == "-n" || arg == "--start-number") {
+            if (i + 1 >= argc) {
+                std::cerr << "Error: " << arg << " requires a number argument\n";
+                return 1;
+            }
+            try {
+                start_dive_number = static_cast<uint32_t>(std::stoul(argv[++i]));
+            } catch (const std::exception&) {
+                std::cerr << "Error: Invalid dive number: " << argv[i] << "\n";
+                return 1;
+            }
+        } else if (arg[0] == '-') {
+            std::cerr << "Error: Unknown option: " << arg << "\n";
+            print_usage();
+            return 1;
+        } else {
+            // Positional argument
+            if (positional_count == 0) {
+                uddf_file = arg;
+            } else if (positional_count == 1) {
+                output_dir = arg;
+            } else {
+                std::cerr << "Error: Too many arguments\n";
+                print_usage();
+                return 1;
+            }
+            ++positional_count;
+        }
+    }
+
+    if (uddf_file.empty()) {
+        std::cerr << "Error: Missing uddf_file argument\n";
+        print_usage();
+        return 1;
+    }
+    if (output_dir.empty()) {
+        std::cerr << "Error: Missing output_dir argument\n";
+        print_usage();
+        return 1;
+    }
 
     if (!std::filesystem::exists(uddf_file)) {
         std::cerr << "UDDF file does not exist: " << uddf_file << '\n';
@@ -352,8 +407,8 @@ auto main(int argc, char* argv[]) -> int {
             }
         }
 
-        // Use dive index as dive number
-        uint32_t dive_number = dive_index + 1;
+        // Use start_dive_number + index as dive number
+        uint32_t dive_number = start_dive_number + dive_index;
 
         // Generate output filename
         auto filename = std::format("dive_{:03d}.fit", dive_index);
