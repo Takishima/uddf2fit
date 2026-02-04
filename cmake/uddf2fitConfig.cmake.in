@@ -1,0 +1,10 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+find_dependency(PkgConfig REQUIRED)
+pkg_check_modules(xerces-c REQUIRED IMPORTED_TARGET xerces-c)
+
+include("${CMAKE_CURRENT_LIST_DIR}/uddf2fitTargets.cmake")
+
+check_required_components(uddf2fit)
